@@ -1,0 +1,6 @@
+udp   UNCONN 0      0                                0.0.0.0:111        0.0.0.0:*    users:(("rpcbind",pid=2472,fd=5),("systemd",pid=1,fd=127))
+udp   UNCONN 0      0                                   [::]:111           [::]:*    users:(("rpcbind",pid=2472,fd=7),("systemd",pid=1,fd=129))
+tcp   LISTEN 0      64                               0.0.0.0:2049       0.0.0.0:*                                                              
+tcp   LISTEN 0      4096                             0.0.0.0:111        0.0.0.0:*    users:(("rpcbind",pid=2472,fd=4),("systemd",pid=1,fd=126))
+tcp   LISTEN 0      64                                  [::]:2049          [::]:*                                                              
+tcp   LISTEN 0      4096                                [::]:111           [::]:*    users:(("rpcbind",pid=2472,fd=6),("systemd",pid=1,fd=128))

@@ -1,0 +1,61 @@
+---
+- name: Configure_nfs_sever
+  hosts: nfss
+  become: true
+
+  tasks:
+  - name: Install_nfs_srv
+    apt:
+      name:  nfs-kernel-server
+      state: latest
+
+  - name: Test ports
+    ansible.builtin.shell: ss -tnplu | grep -e 2049 -e 111 | tee /tmp/results.txt
+   
+  - name: Copy_results
+    ansible.builtin.fetch:
+      src:  /tmp/results.txt
+      dest: ./results
+
+  - name: Create Directory
+    file:
+      path: "/srv/share/upload"
+      state: directory
+      owner: nobody
+      group: nogroup
+      mode: 0777
+
+  - name: Exports config
+    lineinfile:
+     path: "/etc/exports"
+     line: '/srv/share 192.168.50.11/32(rw,sync,root_squash)'
+
+  - name: Restart_exportfs
+    ansible.builtin.shell: exportfs -r
+
+
+- name: Configure_nfs_client
+  hosts: nfsc
+  become: true
+
+  tasks:
+  - name: Install_nfs_client
+    apt:
+      name:  nfs-common
+      state: latest
+
+  - name: fstab_change
+    lineinfile:
+      path: "/etc/fstab"
+      line: '192.168.50.10:/srv/share/ /mnt nfs vers=3,noauto,x-systemd.automount 0 0'
+
+  - name: Restart_sevices
+    ansible.builtin.systemd_service:
+      state: restarted
+      daemon_reload: true
+      name: remote-fs.target
+
+  - name: Change_directory
+    ansible.builtin.shell:
+      cmd: cd /mnt
+      chdir: /mnt/
